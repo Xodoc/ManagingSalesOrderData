@@ -10,28 +10,28 @@
 <EditForm Model="@window" OnValidSubmit="SaveOrder">
     <DataAnnotationsValidator />
     <div class="mb-3">
-        <label for="Name" class="form-label">Name</label>
+        <label class="form-label">Name</label>
         <div class="col-md-4">
             <InputText class="form-control" @bind-Value="window.Name" />
         </div>
         <ValidationMessage For="@(() => window.Name)" />
     </div>
     <div class="mb-3">
-        <label for="QuantityOfWindows" class="form-label">QuantityOfWindows</label>
+        <label class="form-label">QuantityOfWindows</label>
         <div class="col-md-4">
-            <InputNumber class="form-control" @bind-Value="window.QuantityOfWindows"/>
+            <InputNumber class="form-control" @bind-Value="window.QuantityOfWindows" />
         </div>
         <ValidationMessage For="@(() => window.QuantityOfWindows)" />
     </div>
     <div class="mb-3">
-        <label for="TotalSubElements" class="form-label">TotalSubElements</label>
+        <label class="form-label">TotalSubElements</label>
         <div class="col-md-4">
             <InputNumber class="form-control" @bind-Value="window.TotalSubElements" />
         </div>
         <ValidationMessage For="@(() => window.TotalSubElements)" />
     </div>
     <div class="mb-3">
-        <label for="OrderId" class="form-label">OrderId</label>
+        <label class="form-label">OrderId</label>
         <div class="col-md-4">
             <InputNumber class="form-control" @bind-Value="window.OrderId" />
         </div>

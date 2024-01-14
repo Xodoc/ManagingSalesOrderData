@@ -10,28 +10,28 @@
 <EditForm Model="@subElement" OnValidSubmit="SaveOrder">
     <DataAnnotationsValidator />
     <div class="mb-3">
-        <label for="Element" class="form-label">Element</label>
+        <label class="form-label">Element</label>
         <div class="col-md-4">
             <InputNumber class="form-control" @bind-Value="subElement.Element" />
         </div>
         <ValidationMessage For="@(() => subElement.Element)" />
     </div>
     <div class="mb-3">
-        <label for="Type" class="form-label">Type</label>
+        <label class="form-label">Type</label>
         <div class="col-md-4">
             <InputText class="form-control" @bind-Value="subElement.Type" />
         </div>
         <ValidationMessage For="@(() => subElement.Type)" />
     </div>
     <div class="mb-3">
-        <label for="Width" class="form-label">Width</label>
+        <label class="form-label">Width</label>
         <div class="col-md-4">
             <InputNumber class="form-control" @bind-Value="subElement.Width" />
         </div>
         <ValidationMessage For="@(() => subElement.Width)" />
     </div>
     <div class="mb-3">
-        <label for="Height" class="form-label">Height</label>
+        <label class="form-label">Height</label>
         <div class="col-md-4">
             <InputNumber class="form-control" @bind-Value="subElement.Height" />
         </div>
