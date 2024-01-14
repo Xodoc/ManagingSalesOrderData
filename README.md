@@ -25,3 +25,5 @@ Steps to start:
 4) Right-click on ManagingSalesOrderData.Server in Solution Explorer and select “publish” and publish
 5) Open the folder where you published the application and run ManagingSalesOrderData.Server.exe
 6) Open a browser and go to the address "https://loacalhost:5001/", should load the application's home page. To go to swagger, use the url "https://loacalhost:5001/swagger".
+
+If none of the methods worked, then in the Publish folder there is an archive with a ready-made project for deployment. Just download the archive, unzip it and run the exe file
