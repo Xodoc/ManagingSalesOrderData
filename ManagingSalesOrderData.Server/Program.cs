@@ -19,10 +19,10 @@ namespace ManagingSalesOrderData.Server
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            var connectionString = builder.Configuration.GetConnectionString(CONNECTION_STRING);
-
             if (builder.Environment.IsProduction())
             {
+                var connectionString = builder.Configuration.GetConnectionString(CONNECTION_STRING);
+
                 Console.WriteLine("--> Using SqlServer db");
                 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connectionString));
             }
@@ -43,11 +43,12 @@ namespace ManagingSalesOrderData.Server
             var app = builder.Build();
 
             app.UseMiddleware<ExceptionHandlerMiddleware>();
+            
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
                 app.UseWebAssemblyDebugging();
             }
 
