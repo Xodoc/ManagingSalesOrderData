@@ -1,0 +1,104 @@
+﻿@page "/subelements"
+@using ManagingSalesOrderData.Shared.Dtos
+@inject HttpClient Http
+
+<h1>SubElement Data</h1>
+
+<div class="row">
+    <div class="col-md-1">
+        <a href='/subelement/add' class="btn btn-primary" role="button">
+            <i class="fas fa-user-plus"></i>
+            Add SubElement
+        </a>
+    </div>
+    <div class="col-md-6 mx-auto text-center">
+        <input type="text" class="form-control" placeholder="Search SubElement by type"
+               @bind="SearchString" @bind:event="oninput" @onkeyup="FilterSubElement" />
+        @if (SearchString.Length > 0)
+        {
+            <div class="input-group-append">
+                <button class="btn btn-danger" @onclick="ResetSearch">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        }
+    </div>
+</div>
+<br />
+
+@if (subElements == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped align-middle table-bordered">
+        <thead class="table-success">
+            <tr>
+                <th>Id</th>
+                <th>Element</th>
+                <th>Type</th>
+                <th>Width</th>
+                <th>Height</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var subElement in subElements)
+            {
+                <tr>
+                    <td>@subElement.Id</td>
+                    <td>@subElement.Element</td>
+                    <td>@subElement.Type</td>
+                    <td>@subElement.Height</td>
+                    <td>@subElement.Height</td>
+                    <td>
+                        <a href='/subelement/edit/@subElement.Id' class="btn btn-outline-dark" role="button">
+                            Edit
+                        </a>
+                        <a href='/subelement/delete/@subElement.Id' class="btn btn-outline-danger" role="button">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    protected List<SubElementDto> subElements = new();
+    protected SubElementDto subElement = new();
+    protected List<SubElementDto> searchSubElementData = new();
+    protected string SearchString { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        subElements = await Http.GetFromJsonAsync<List<SubElementDto>>("/api/subelement");
+        searchSubElementData = subElements;
+    }
+
+    protected void FilterSubElement()
+    {
+        if (!string.IsNullOrEmpty(SearchString))
+        {
+            subElements = searchSubElementData.Where(x => x.Type.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
+                                              .ToList();
+        }
+        else
+        {
+            subElements = searchSubElementData;
+        }
+    }
+
+    protected void DeleteConfirm(int id)
+    {
+        subElement = subElements.FirstOrDefault(x => x.Id == id);
+    }
+
+    public void ResetSearch()
+    {
+        SearchString = string.Empty;
+        subElements = searchSubElementData;
+    }
+}

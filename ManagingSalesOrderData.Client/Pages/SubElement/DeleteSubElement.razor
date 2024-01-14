@@ -1,0 +1,61 @@
+﻿@page "/subelement/delete/{subElementId:int}"
+@using ManagingSalesOrderData.Shared.Dtos
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h2>Delete SubElement</h2>
+<br />
+
+<div class="form-group">
+    <h4>Do you want to delete this SubElement?</h4>
+    <table class="table" style="display:block">
+        <tbody>
+            <tr>
+                <td>Element :</td>
+                <td></td>
+                <td>@subElement.Element</td>
+            </tr>
+            <tr>
+                <td>QuantityOfWindows :</td>
+                <td></td>
+                <td>@subElement.Type</td>
+            </tr>
+            <tr>
+                <td>TotalSubElements :</td>
+                <td></td>
+                <td>@subElement.Width</td>
+            </tr>
+            <tr>
+                <td>OrderId :</td>
+                <td></td>
+                <td>@subElement.Height</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="form-group">
+    <input type="submit" value="Delete" @onclick="(async () => await RemoveWindow(subElement.Id))" class="btn btn-danger" />
+    <input type="submit" value="Cancel" @onclick="(() => Cancel())" class="btn btn-warning" />
+</div>
+
+@code {
+    [Parameter]
+    public int subElementId { get; set; }
+    private SubElementDto subElement = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        subElement = await Http.GetFromJsonAsync<SubElementDto>("/api/subelement/" + Convert.ToInt32(subElementId));
+    }
+
+    protected async Task RemoveWindow(int orderId)
+    {
+        await Http.DeleteAsync("api/subelement/" + orderId);
+        NavigationManager.NavigateTo("/subelements");
+    }
+
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/subelements");
+    }
+}

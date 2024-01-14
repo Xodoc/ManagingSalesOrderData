@@ -1,0 +1,104 @@
+﻿@page "/windows"
+@using ManagingSalesOrderData.Shared.Dtos
+@inject HttpClient Http
+
+<h1>Window Data</h1>
+
+<div class="row">
+    <div class="col-md-1">
+        <a href='/window/add' class="btn btn-primary" role="button">
+            <i class="fas fa-user-plus"></i>
+            Add Window
+        </a>
+    </div>
+    <div class="col-md-6 mx-auto text-center">
+        <input type="text" class="form-control" placeholder="Search window by name"
+               @bind="SearchString" @bind:event="oninput" @onkeyup="FilterWindow" />
+        @if (SearchString.Length > 0)
+        {
+            <div class="input-group-append">
+                <button class="btn btn-danger" @onclick="ResetSearch">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        }
+    </div>
+</div>
+<br />
+
+@if (windows == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped align-middle table-bordered">
+        <thead class="table-success">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>QuantityOfWindows</th>
+                <th>TotalSubElements</th>
+                <th>OrderId</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var window in windows)
+            {
+                <tr>
+                    <td>@window.Id</td>
+                    <td>@window.Name</td>
+                    <td>@window.QuantityOfWindows</td>
+                    <td>@window.TotalSubElements</td>
+                    <td>@window.OrderId</td>
+                    <td>
+                        <a href='/window/edit/@window.Id' class="btn btn-outline-dark" role="button">
+                            Edit
+                        </a>
+                        <a href='/window/delete/@window.Id' class="btn btn-outline-danger" role="button">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    protected List<WindowDto> windows = new();
+    protected WindowDto window = new();
+    protected List<WindowDto> searchWindowData = new();
+    protected string SearchString { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        windows = await Http.GetFromJsonAsync<List<WindowDto>>("/api/window");
+        searchWindowData = windows;
+    }
+
+    protected void FilterWindow()
+    {
+        if (!string.IsNullOrEmpty(SearchString))
+        {
+            windows = searchWindowData.Where(x => x.Name.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
+                                    .ToList();
+        }
+        else
+        {
+            windows = searchWindowData;
+        }
+    }
+
+    protected void DeleteConfirm(int id)
+    {
+        window = windows.FirstOrDefault(x => x.Id == id);
+    }
+
+    public void ResetSearch()
+    {
+        SearchString = string.Empty;
+        windows = searchWindowData;
+    }
+}

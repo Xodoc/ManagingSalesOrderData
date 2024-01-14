@@ -1,0 +1,51 @@
+﻿@page "/order/delete/{orderId:int}"
+@using ManagingSalesOrderData.Shared.Dtos
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h2>Delete Order</h2>
+<br />
+
+<div class="form-group">
+    <h4>Do you want to delete this order?</h4>
+    <table class ="table" style="display:block">
+        <tbody>
+            <tr>
+                <td>Name :</td>
+                <td></td>
+                <td>@order.Name</td>
+            </tr>
+            <tr>
+                <td>State :</td>
+                <td></td>
+                <td>@order.State</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="form-group">
+    <input type="submit" value="Delete" @onclick="(async () => await RemoveOrder(order.Id))" class="btn btn-danger" />
+    <input type="submit" value="Cancel" @onclick="(() => Cancel())" class="btn btn-warning" />
+</div>
+
+@code {
+    [Parameter]
+    public int orderId { get; set; }
+    private OrderDto order = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        order = await Http.GetFromJsonAsync<OrderDto>("/api/order/" + Convert.ToInt32(orderId));
+    }
+
+    protected async Task RemoveOrder(int orderId)
+    {
+        await Http.DeleteAsync("api/order/" + orderId);
+        NavigationManager.NavigateTo("/orders");
+    }
+
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/orders");
+    }
+}

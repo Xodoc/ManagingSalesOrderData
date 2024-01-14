@@ -1,0 +1,79 @@
+﻿@page "/window/add"
+@page "/window/edit/{windowId:int}"
+@using ManagingSalesOrderData.Shared.Dtos
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h1>@Title Window</h1>
+<hr />
+
+<EditForm Model="@window" OnValidSubmit="SaveOrder">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="Name" class="form-label">Name</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="window.Name" />
+        </div>
+        <ValidationMessage For="@(() => window.Name)" />
+    </div>
+    <div class="mb-3">
+        <label for="QuantityOfWindows" class="form-label">QuantityOfWindows</label>
+        <div class="col-md-4">
+            <InputNumber class="form-control" @bind-Value="window.QuantityOfWindows"/>
+        </div>
+        <ValidationMessage For="@(() => window.QuantityOfWindows)" />
+    </div>
+    <div class="mb-3">
+        <label for="TotalSubElements" class="form-label">TotalSubElements</label>
+        <div class="col-md-4">
+            <InputNumber class="form-control" @bind-Value="window.TotalSubElements" />
+        </div>
+        <ValidationMessage For="@(() => window.TotalSubElements)" />
+    </div>
+    <div class="mb-3">
+        <label for="OrderId" class="form-label">OrderId</label>
+        <div class="col-md-4">
+            <InputNumber class="form-control" @bind-Value="window.OrderId" />
+        </div>
+        <ValidationMessage For="@(() => window.OrderId)" />
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button class="btn btn-light" @onclick="Cancel">Cancel</button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int WindowId { get; set; }
+    protected string Title = "Add";
+    protected WindowDto window = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (WindowId != 0)
+        {
+            Title = "Edit";
+            window = await Http.GetFromJsonAsync<WindowDto>("api/window/" + WindowId);
+        }
+    }
+
+    protected async Task SaveOrder()
+    {
+        if (window.Id != 0)
+        {
+            await Http.PutAsJsonAsync("api/window", window);
+        }
+        else
+        {
+            await Http.PostAsJsonAsync("api/window", window);
+        }
+
+        Cancel();
+    }
+
+    public void Cancel()
+    {
+        NavigationManager.NavigateTo("/windows");
+    }
+}

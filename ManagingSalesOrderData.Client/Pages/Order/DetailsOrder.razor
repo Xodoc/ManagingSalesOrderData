@@ -1,0 +1,100 @@
+﻿@page "/orders"
+@using ManagingSalesOrderData.Shared.Dtos
+@inject HttpClient Http
+
+<h1>Order Data</h1>
+
+<div class="row">
+    <div class="col-md-1">
+        <a href='/order/add' class="btn btn-primary" role="button">
+            <i class="fas fa-user-plus"></i>
+            Add Order
+        </a>
+    </div>
+    <div class="col-md-6 mx-auto text-center">
+        <input type="text" class="form-control" placeholder="Search order by name"
+               @bind="SearchString" @bind:event="oninput" @onkeyup="FilterOrder" />
+        @if (SearchString.Length > 0)
+        {
+            <div class="input-group-append">
+                <button class="btn btn-danger" @onclick="ResetSearch">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        }
+    </div>
+</div>
+<br />
+
+@if (orders == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped align-middle table-bordered">
+        <thead class="table-success">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>State</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in orders)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.Name</td>
+                    <td>@order.State</td>
+                    <td>
+                        <a href='/order/edit/@order.Id' class="btn btn-outline-dark" role="button">
+                            Edit
+                        </a>
+                        <a href='/order/delete/@order.Id' class="btn btn-outline-danger" role="button">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    protected List<OrderDto> orders = new();
+    protected OrderDto order = new();
+    protected List<OrderDto> searchOrderData = new();
+    protected string SearchString { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        orders = await Http.GetFromJsonAsync<List<OrderDto>>("/api/order");
+        searchOrderData = orders;
+    }
+
+    protected void FilterOrder()
+    {
+        if (!string.IsNullOrEmpty(SearchString))
+        {
+            orders = searchOrderData.Where(x => x.Name.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
+                                    .ToList();
+        }
+        else
+        {
+            orders = searchOrderData;
+        }
+    }
+
+    protected void DeleteConfirm(int id)
+    {
+        order = orders.FirstOrDefault(x => x.Id == id);
+    }
+
+    public void ResetSearch()
+    {
+        SearchString = string.Empty;
+        orders = searchOrderData;
+    }
+}
